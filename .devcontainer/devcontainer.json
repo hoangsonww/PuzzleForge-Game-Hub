@@ -1,5 +1,5 @@
 {
-  "name": "COMP 426 a04 Container",
+  "name": "Wordle",
   "dockerFile": "Dockerfile",
 
   // Forward ports
