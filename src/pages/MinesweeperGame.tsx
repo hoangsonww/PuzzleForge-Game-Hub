@@ -290,7 +290,6 @@ export default function MinesweeperGame() {
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-2">
-            <Bomb className="text-cyan-300" size={28} />
             <p className="text-lg text-white">
               Reveal every safe tile without hitting a mine.
             </p>

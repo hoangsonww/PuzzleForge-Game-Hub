@@ -135,13 +135,13 @@ export function EnterKey({ onEnter }: EnterKeyProps) {
   return (
     <>
       <div
-        className={`hidden sm:w-16 h-14 rounded-lg sm:flex items-center justify-center text-sm font-bold text-black bg-slate-300`}
+        className={`hidden sm:w-16 h-14 rounded-lg sm:flex items-center justify-center text-sm font-bold text-slate-900 bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg shadow-orange-500/40 ring-1 ring-white/40 transition-all cursor-pointer hover:from-amber-300 hover:to-orange-400 hover:-translate-y-0.5 active:translate-y-0 active:scale-95`}
         onClick={onEnter}
       >
         ENTER
       </div>
       <div
-        className={`flex w-8 h-14 rounded-lg sm:hidden items-center justify-center text-sm font-bold text-black bg-slate-300`}
+        className={`flex w-8 h-14 rounded-lg sm:hidden items-center justify-center text-sm font-bold text-slate-900 bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg shadow-orange-500/40 ring-1 ring-white/40 transition-all cursor-pointer hover:from-amber-300 hover:to-orange-400 hover:-translate-y-0.5 active:translate-y-0 active:scale-95`}
         onClick={onEnter}
       >
         <CornerDownLeft />

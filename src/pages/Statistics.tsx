@@ -18,7 +18,15 @@ import {
   PolarRadiusAxis,
   Radar,
 } from "recharts";
-import { Trophy, Target, Clock, TrendingUp, Award } from "lucide-react";
+import {
+  Trophy,
+  Target,
+  Clock,
+  TrendingUp,
+  Award,
+  Gamepad2,
+  Flame,
+} from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Statistics() {
@@ -201,6 +209,16 @@ export default function Statistics() {
     return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
   };
 
+  const axisTick = { fill: "#fff", fontSize: 11 };
+  const angledXAxisProps = {
+    interval: 0,
+    angle: -25,
+    textAnchor: "end" as const,
+    height: 55,
+    tick: axisTick,
+  };
+  const chartMargin = { top: 8, right: 24, left: 8, bottom: 36 };
+
   return (
     <Layout title="Statistics">
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -212,7 +230,7 @@ export default function Statistics() {
             className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl"
           >
             <div className="flex items-center justify-between mb-2">
-              <Trophy className="text-yellow-400" size={32} />
+              <Trophy className="text-yellow-400 stats-icon-shadow" size={32} />
               <span className="text-3xl font-extrabold">{totalGamesWon}</span>
             </div>
             <p className="text-sm text-white">Total Wins</p>
@@ -225,7 +243,7 @@ export default function Statistics() {
             className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl"
           >
             <div className="flex items-center justify-between mb-2">
-              <Target className="text-blue-400" size={32} />
+              <Target className="text-blue-400 stats-icon-shadow" size={32} />
               <span className="text-3xl font-extrabold">{overallWinRate}%</span>
             </div>
             <p className="text-sm text-white">Win Rate</p>
@@ -238,7 +256,10 @@ export default function Statistics() {
             className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl"
           >
             <div className="flex items-center justify-between mb-2">
-              <TrendingUp className="text-green-400" size={32} />
+              <TrendingUp
+                className="text-green-400 stats-icon-shadow"
+                size={32}
+              />
               <span className="text-3xl font-extrabold">
                 {stats.wordle.currentStreak}
               </span>
@@ -253,12 +274,42 @@ export default function Statistics() {
             className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl"
           >
             <div className="flex items-center justify-between mb-2">
-              <Award className="text-purple-400" size={32} />
+              <Award className="text-purple-400 stats-icon-shadow" size={32} />
               <span className="text-3xl font-extrabold">
                 {unlockedAchievements}/{achievements.length}
               </span>
             </div>
             <p className="text-sm text-white">Achievements</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <Gamepad2 className="text-cyan-300 stats-icon-shadow" size={32} />
+              <span className="text-3xl font-extrabold">
+                {totalGamesPlayed}
+              </span>
+            </div>
+            <p className="text-sm text-white">Total Played</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <Flame className="text-orange-400 stats-icon-shadow" size={32} />
+              <span className="text-3xl font-extrabold">
+                {stats.wordle.maxStreak}
+              </span>
+            </div>
+            <p className="text-sm text-white">Best Streak</p>
           </motion.div>
         </div>
 
@@ -266,57 +317,65 @@ export default function Statistics() {
           {/* Games Played vs Won */}
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl">
             <h3 className="text-xl font-bold mb-4">Games Played vs Won</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={gameDistribution}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
-                <XAxis dataKey="name" stroke="#fff" />
-                <YAxis stroke="#fff" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#1f2937",
-                    border: "none",
-                    borderRadius: "8px",
-                  }}
-                  labelStyle={{ color: "#fff" }}
-                />
-                <Legend />
-                <Bar dataKey="played" fill="#60a5fa" name="Played" />
-                <Bar dataKey="won" fill="#34d399" name="Won" />
-              </BarChart>
-            </ResponsiveContainer>
+            <div className="stats-chart-wrap">
+              <div className="stats-chart-shell stats-chart-shell--tall">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={gameDistribution} margin={chartMargin}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
+                    <XAxis dataKey="name" stroke="#fff" {...angledXAxisProps} />
+                    <YAxis stroke="#fff" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#1f2937",
+                        border: "none",
+                        borderRadius: "8px",
+                      }}
+                      labelStyle={{ color: "#fff" }}
+                    />
+                    <Legend />
+                    <Bar dataKey="played" fill="#60a5fa" name="Played" />
+                    <Bar dataKey="won" fill="#34d399" name="Won" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
 
           {/* Game Distribution Pie Chart */}
           {pieData.length > 0 && (
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl">
               <h3 className="text-xl font-bold mb-4">Game Distribution</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={pieData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) =>
-                      `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
-                    }
-                    outerRadius={100}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {pieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#1f2937",
-                      border: "none",
-                      borderRadius: "8px",
-                    }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
+              <div className="stats-chart-wrap">
+                <div className="stats-chart-shell stats-chart-shell--tall">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={pieData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, percent }) =>
+                          `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
+                        }
+                        outerRadius={100}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {pieData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "#1f2937",
+                          border: "none",
+                          borderRadius: "8px",
+                        }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -325,130 +384,158 @@ export default function Statistics() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl">
             <h3 className="text-xl font-bold mb-4">Win Rate by Game</h3>
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={winRateData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
-                <XAxis dataKey="name" stroke="#fff" />
-                <YAxis stroke="#fff" domain={[0, 100]} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#1f2937",
-                    border: "none",
-                    borderRadius: "8px",
-                  }}
-                  formatter={(value: number) => `${value.toFixed(1)}%`}
-                />
-                <Bar dataKey="rate" fill="#38bdf8" name="Win Rate" />
-              </BarChart>
-            </ResponsiveContainer>
+            <div className="stats-chart-wrap">
+              <div className="stats-chart-shell">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={winRateData} margin={chartMargin}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
+                    <XAxis dataKey="name" stroke="#fff" {...angledXAxisProps} />
+                    <YAxis stroke="#fff" domain={[0, 100]} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#1f2937",
+                        border: "none",
+                        borderRadius: "8px",
+                      }}
+                      formatter={(value: number) => `${value.toFixed(1)}%`}
+                    />
+                    <Bar dataKey="rate" fill="#38bdf8" name="Win Rate" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
 
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl">
             <h3 className="text-xl font-bold mb-4">Average Performance</h3>
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={averagePerformanceData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
-                <XAxis dataKey="name" stroke="#fff" />
-                <YAxis stroke="#fff" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#1f2937",
-                    border: "none",
-                    borderRadius: "8px",
-                  }}
-                  formatter={(value: number) => value.toFixed(1)}
-                />
-                <Bar
-                  dataKey="value"
-                  fill="#f97316"
-                  name="Avg (Guesses/Moves/Mistakes)"
-                />
-              </BarChart>
-            </ResponsiveContainer>
+            <div className="stats-chart-wrap">
+              <div className="stats-chart-shell">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={averagePerformanceData} margin={chartMargin}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
+                    <XAxis dataKey="name" stroke="#fff" {...angledXAxisProps} />
+                    <YAxis stroke="#fff" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#1f2937",
+                        border: "none",
+                        borderRadius: "8px",
+                      }}
+                      formatter={(value: number) => value.toFixed(1)}
+                    />
+                    <Bar
+                      dataKey="value"
+                      fill="#f97316"
+                      name="Avg (Guesses/Moves/Mistakes)"
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
 
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl">
             <h3 className="text-xl font-bold mb-4">Fastest Wins (Seconds)</h3>
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={fastestWinData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
-                <XAxis dataKey="name" stroke="#fff" />
-                <YAxis stroke="#fff" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#1f2937",
-                    border: "none",
-                    borderRadius: "8px",
-                  }}
-                  formatter={(value: number) =>
-                    value > 0 ? `${Math.round(value)}s` : "N/A"
-                  }
-                />
-                <Bar dataKey="seconds" fill="#a855f7" name="Fastest" />
-              </BarChart>
-            </ResponsiveContainer>
+            <div className="stats-chart-wrap">
+              <div className="stats-chart-shell">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={fastestWinData} margin={chartMargin}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
+                    <XAxis dataKey="name" stroke="#fff" {...angledXAxisProps} />
+                    <YAxis stroke="#fff" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#1f2937",
+                        border: "none",
+                        borderRadius: "8px",
+                      }}
+                      formatter={(value: number) =>
+                        value > 0 ? `${Math.round(value)}s` : "N/A"
+                      }
+                    />
+                    <Bar dataKey="seconds" fill="#a855f7" name="Fastest" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
 
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl">
             <h3 className="text-xl font-bold mb-4">Wins Distribution</h3>
             {winsPieData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={240}>
-                <PieChart>
-                  <Pie
-                    data={winsPieData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) =>
-                      `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
-                    }
-                    outerRadius={90}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {winsPieData.map((entry, index) => (
-                      <Cell key={`win-cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#1f2937",
-                      border: "none",
-                      borderRadius: "8px",
-                    }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
+              <div className="stats-chart-wrap">
+                <div className="stats-chart-shell">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={winsPieData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, percent }) =>
+                          `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
+                        }
+                        outerRadius={90}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {winsPieData.map((entry, index) => (
+                          <Cell key={`win-cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "#1f2937",
+                          border: "none",
+                          borderRadius: "8px",
+                        }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
             ) : (
-              <div className="h-[240px] flex items-center justify-center text-sm text-white/80">
-                No wins yet.
+              <div className="stats-chart-wrap">
+                <div className="stats-chart-shell">
+                  <div className="h-full flex items-center justify-center text-sm text-white/80">
+                    No wins yet.
+                  </div>
+                </div>
               </div>
             )}
           </div>
 
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl">
             <h3 className="text-xl font-bold mb-4">Engagement Radar</h3>
-            <ResponsiveContainer width="100%" height={240}>
-              <RadarChart data={radarData}>
-                <PolarGrid stroke="#ffffff20" />
-                <PolarAngleAxis dataKey="game" stroke="#fff" />
-                <PolarRadiusAxis stroke="#fff" />
-                <Radar
-                  name="Played"
-                  dataKey="played"
-                  stroke="#22d3ee"
-                  fill="#22d3ee"
-                  fillOpacity={0.35}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#1f2937",
-                    border: "none",
-                    borderRadius: "8px",
-                  }}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
+            <div className="stats-chart-wrap">
+              <div className="stats-chart-shell">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart data={radarData}>
+                    <PolarGrid stroke="#ffffff20" />
+                    <PolarAngleAxis
+                      dataKey="game"
+                      stroke="#fff"
+                      tick={axisTick}
+                    />
+                    <PolarRadiusAxis stroke="#fff" />
+                    <Radar
+                      name="Played"
+                      dataKey="played"
+                      stroke="#22d3ee"
+                      fill="#22d3ee"
+                      fillOpacity={0.35}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#1f2937",
+                        border: "none",
+                        borderRadius: "8px",
+                      }}
+                    />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
 
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl">
@@ -456,25 +543,33 @@ export default function Statistics() {
               Wordle Guess Distribution
             </h3>
             {stats.wordle.played > 0 ? (
-              <ResponsiveContainer width="100%" height={240}>
-                <BarChart data={wordleGuessDistribution}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
-                  <XAxis dataKey="guesses" stroke="#fff" />
-                  <YAxis stroke="#fff" />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#1f2937",
-                      border: "none",
-                      borderRadius: "8px",
-                    }}
-                    labelStyle={{ color: "#fff" }}
-                  />
-                  <Bar dataKey="count" fill="#84cc16" name="Games Won" />
-                </BarChart>
-              </ResponsiveContainer>
+              <div className="stats-chart-wrap">
+                <div className="stats-chart-shell">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={wordleGuessDistribution}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
+                      <XAxis dataKey="guesses" stroke="#fff" tick={axisTick} />
+                      <YAxis stroke="#fff" />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "#1f2937",
+                          border: "none",
+                          borderRadius: "8px",
+                        }}
+                        labelStyle={{ color: "#fff" }}
+                      />
+                      <Bar dataKey="count" fill="#84cc16" name="Games Won" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
             ) : (
-              <div className="h-[240px] flex items-center justify-center text-sm text-white/80">
-                Play Wordle to see this chart.
+              <div className="stats-chart-wrap">
+                <div className="stats-chart-shell">
+                  <div className="h-full flex items-center justify-center text-sm text-white/80">
+                    Play Wordle to see this chart.
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -517,7 +612,7 @@ export default function Statistics() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="flex items-center gap-1">
-                  <Clock size={14} />
+                  <Clock className="stats-icon-shadow" size={14} />
                   Fastest:
                 </span>
                 <span className="font-bold">
@@ -567,7 +662,7 @@ export default function Statistics() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="flex items-center gap-1">
-                  <Clock size={14} />
+                  <Clock className="stats-icon-shadow" size={14} />
                   Fastest:
                 </span>
                 <span className="font-bold">
@@ -608,7 +703,7 @@ export default function Statistics() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="flex items-center gap-1">
-                  <Clock size={14} />
+                  <Clock className="stats-icon-shadow" size={14} />
                   Fastest:
                 </span>
                 <span className="font-bold">
@@ -650,7 +745,7 @@ export default function Statistics() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="flex items-center gap-1">
-                  <Clock size={14} />
+                  <Clock className="stats-icon-shadow" size={14} />
                   Fastest:
                 </span>
                 <span className="font-bold">
@@ -693,7 +788,7 @@ export default function Statistics() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="flex items-center gap-1">
-                  <Clock size={14} />
+                  <Clock className="stats-icon-shadow" size={14} />
                   Fastest:
                 </span>
                 <span className="font-bold">
@@ -768,7 +863,9 @@ export default function Statistics() {
                     : "bg-white/5 border-2 border-gray-600 opacity-50"
                 }`}
               >
-                <div className="text-4xl mb-2">{achievement.icon}</div>
+                <div className="text-4xl mb-2 stats-icon-shadow">
+                  {achievement.icon}
+                </div>
                 <h4 className="font-bold mb-1">{achievement.name}</h4>
                 <p className="text-xs text-white">{achievement.description}</p>
                 {achievement.unlocked && achievement.unlockedAt && (
