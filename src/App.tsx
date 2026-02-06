@@ -12,6 +12,7 @@ const MemoryGame = lazy(() => import("./pages/MemoryGame"));
 const MinesweeperGame = lazy(() => import("./pages/MinesweeperGame"));
 const Settings = lazy(() => import("./pages/Settings"));
 const Statistics = lazy(() => import("./pages/Statistics"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 /**
  * App component is the main router component for the game hub.
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="/minesweeper" element={<MinesweeperGame />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/statistics" element={<Statistics />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
   );

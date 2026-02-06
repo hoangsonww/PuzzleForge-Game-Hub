@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 import { Toaster } from "react-hot-toast";
 import App from "./App";
@@ -10,7 +10,7 @@ const root = createRoot(document.getElementById("root")!);
 root.render(
   <StrictMode>
     <ErrorBoundary>
-      <BrowserRouter>
+      <HashRouter>
         <App />
         <Analytics />
         <Toaster
@@ -37,7 +37,7 @@ root.render(
             },
           }}
         />
-      </BrowserRouter>
+      </HashRouter>
     </ErrorBoundary>
   </StrictMode>,
 );

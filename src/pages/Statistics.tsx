@@ -89,7 +89,7 @@ export default function Statistics() {
     { name: "Numbers", value: stats.numbers.played, color: "#eab308" },
     { name: "Memory", value: stats.memory.played, color: "#f97316" },
     { name: "Minesweeper", value: stats.minesweeper.played, color: "#22d3ee" },
-  ].filter((d) => d.value > 0);
+  ];
 
   const winsPieData = [
     { name: "Wordle", value: stats.wordle.won, color: "#84cc16" },
@@ -98,7 +98,7 @@ export default function Statistics() {
     { name: "Numbers", value: stats.numbers.won, color: "#eab308" },
     { name: "Memory", value: stats.memory.won, color: "#f97316" },
     { name: "Minesweeper", value: stats.minesweeper.won, color: "#22d3ee" },
-  ].filter((d) => d.value > 0);
+  ];
 
   const winRateData = [
     {
@@ -201,6 +201,13 @@ export default function Statistics() {
     { game: "Memory", played: stats.memory.played },
     { game: "Minesweeper", played: stats.minesweeper.played },
   ];
+
+  const hasGameDistributionData = pieData.some((d) => d.value > 0);
+  const hasWinsDistributionData = winsPieData.some((d) => d.value > 0);
+  const hasWordleGuessData = wordleGuessDistribution.some((d) => d.count > 0);
+  const emptyPieData = [{ name: "No Data", value: 1, color: "#64748b" }];
+  const pieChartData = hasGameDistributionData ? pieData : emptyPieData;
+  const winsChartData = hasWinsDistributionData ? winsPieData : emptyPieData;
 
   const formatTime = (seconds: number) => {
     if (!Number.isFinite(seconds) || seconds <= 0) return "N/A";
@@ -342,29 +349,32 @@ export default function Statistics() {
           </div>
 
           {/* Game Distribution Pie Chart */}
-          {pieData.length > 0 && (
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl">
-              <h3 className="text-xl font-bold mb-4">Game Distribution</h3>
-              <div className="stats-chart-wrap">
-                <div className="stats-chart-shell stats-chart-shell--tall">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={pieData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) =>
-                          `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
-                        }
-                        outerRadius={100}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {pieData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl">
+            <h3 className="text-xl font-bold mb-4">Game Distribution</h3>
+            <div className="stats-chart-wrap">
+              <div className="stats-chart-shell stats-chart-shell--tall relative">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={pieChartData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={
+                        hasGameDistributionData
+                          ? ({ name, percent }) =>
+                              `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
+                          : false
+                      }
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {pieChartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    {hasGameDistributionData && (
                       <Tooltip
                         contentStyle={{
                           backgroundColor: "#1f2937",
@@ -372,12 +382,17 @@ export default function Statistics() {
                           borderRadius: "8px",
                         }}
                       />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
+                    )}
+                  </PieChart>
+                </ResponsiveContainer>
+                {!hasGameDistributionData && (
+                  <div className="absolute inset-0 flex items-center justify-center text-sm text-white/80 pointer-events-none">
+                    No games played yet.
+                  </div>
+                )}
               </div>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Insights Grid */}
@@ -462,27 +477,30 @@ export default function Statistics() {
 
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl">
             <h3 className="text-xl font-bold mb-4">Wins Distribution</h3>
-            {winsPieData.length > 0 ? (
-              <div className="stats-chart-wrap">
-                <div className="stats-chart-shell">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={winsPieData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) =>
-                          `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
-                        }
-                        outerRadius={90}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {winsPieData.map((entry, index) => (
-                          <Cell key={`win-cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
+            <div className="stats-chart-wrap">
+              <div className="stats-chart-shell relative">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={winsChartData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={
+                        hasWinsDistributionData
+                          ? ({ name, percent }) =>
+                              `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
+                          : false
+                      }
+                      outerRadius={90}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {winsChartData.map((entry, index) => (
+                        <Cell key={`win-cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    {hasWinsDistributionData && (
                       <Tooltip
                         contentStyle={{
                           backgroundColor: "#1f2937",
@@ -490,19 +508,16 @@ export default function Statistics() {
                           borderRadius: "8px",
                         }}
                       />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            ) : (
-              <div className="stats-chart-wrap">
-                <div className="stats-chart-shell">
-                  <div className="h-full flex items-center justify-center text-sm text-white/80">
+                    )}
+                  </PieChart>
+                </ResponsiveContainer>
+                {!hasWinsDistributionData && (
+                  <div className="absolute inset-0 flex items-center justify-center text-sm text-white/80 pointer-events-none">
                     No wins yet.
                   </div>
-                </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
 
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl">
@@ -542,36 +557,31 @@ export default function Statistics() {
             <h3 className="text-xl font-bold mb-4">
               Wordle Guess Distribution
             </h3>
-            {stats.wordle.played > 0 ? (
-              <div className="stats-chart-wrap">
-                <div className="stats-chart-shell">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={wordleGuessDistribution}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
-                      <XAxis dataKey="guesses" stroke="#fff" tick={axisTick} />
-                      <YAxis stroke="#fff" />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "#1f2937",
-                          border: "none",
-                          borderRadius: "8px",
-                        }}
-                        labelStyle={{ color: "#fff" }}
-                      />
-                      <Bar dataKey="count" fill="#84cc16" name="Games Won" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            ) : (
-              <div className="stats-chart-wrap">
-                <div className="stats-chart-shell">
-                  <div className="h-full flex items-center justify-center text-sm text-white/80">
-                    Play Wordle to see this chart.
+            <div className="stats-chart-wrap">
+              <div className="stats-chart-shell relative">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={wordleGuessDistribution}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
+                    <XAxis dataKey="guesses" stroke="#fff" tick={axisTick} />
+                    <YAxis stroke="#fff" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#1f2937",
+                        border: "none",
+                        borderRadius: "8px",
+                      }}
+                      labelStyle={{ color: "#fff" }}
+                    />
+                    <Bar dataKey="count" fill="#84cc16" name="Games Won" />
+                  </BarChart>
+                </ResponsiveContainer>
+                {!hasWordleGuessData && (
+                  <div className="absolute inset-0 flex items-center justify-center text-sm text-white/80 pointer-events-none">
+                    No Wordle wins yet.
                   </div>
-                </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </div>
 
