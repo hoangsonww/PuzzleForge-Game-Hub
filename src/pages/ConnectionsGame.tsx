@@ -150,6 +150,19 @@ export default function ConnectionsGame() {
     }
   };
 
+  const addSoftHyphens = (value: string, chunkSize = 8) => {
+    if (value.length <= chunkSize * 2) return value;
+    const softHyphen = "\u00AD";
+    return value.replace(/\S{12,}/g, (token) =>
+      token
+        .split("")
+        .map((char, index) =>
+          index > 0 && index % chunkSize === 0 ? `${softHyphen}${char}` : char,
+        )
+        .join(""),
+    );
+  };
+
   if (loading) {
     return (
       <Layout title="Connections">
@@ -212,7 +225,9 @@ export default function ConnectionsGame() {
               {puzzle?.map((group, idx) => (
                 <div key={idx} className="mb-2">
                   <p className="font-semibold">{group.category}</p>
-                  <p className="text-sm text-white">{group.words.join(", ")}</p>
+                  <p className="text-sm text-white connections-word">
+                    {addSoftHyphens(group.words.join(", "))}
+                  </p>
                 </div>
               ))}
             </div>
@@ -268,23 +283,25 @@ export default function ConnectionsGame() {
             className={`${getDifficultyColor(group.difficulty)} rounded-lg p-4 mb-3 text-center`}
           >
             <p className="font-bold text-lg mb-2">{group.category}</p>
-            <p className="text-white">{group.words.join(", ")}</p>
+            <p className="text-white connections-word">
+              {addSoftHyphens(group.words.join(", "))}
+            </p>
           </div>
         ))}
 
         {/* Word Grid */}
-        <div className="grid grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           {remainingWords.map((word, idx) => (
             <button
               key={idx}
               onClick={() => toggleWord(word)}
-              className={`p-4 rounded-lg font-semibold text-sm sm:text-base transition-all ${
+              className={`p-4 rounded-lg font-semibold text-sm sm:text-base transition-all leading-tight text-center min-h-[3.5rem] connections-word ${
                 selectedWords.includes(word)
                   ? "bg-gray-700 text-white scale-95"
                   : "bg-white/20 hover:bg-white/30 text-white"
               }`}
             >
-              {word}
+              {addSoftHyphens(word)}
             </button>
           ))}
         </div>

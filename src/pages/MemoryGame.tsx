@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Layout from "../components/Layout";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useStatsStore } from "../store/statsStore";
-import { RefreshCw, Brain } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 
 interface MemoryPuzzleResponse {
   pairs: string[];
@@ -194,7 +194,6 @@ export default function MemoryGame() {
       <div className="max-w-5xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-2">
-            <Brain className="text-orange-300" size={28} />
             <p className="text-lg text-white">
               Flip cards and match pairs to clear the board.
             </p>
